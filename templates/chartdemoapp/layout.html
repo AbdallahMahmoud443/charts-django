@@ -1,0 +1,91 @@
+{% load bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charts Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container my-5">
+        {% block content_page %}
+
+        {% endblock content_page %}
+    </div>
+    <script>
+        // Get Canvas Context => 2d
+        const chartContext = document.getElementById('mychart').getContext('2d');
+        // Get Select Box
+        const chartType = document.getElementById('chartType');
+        // Select Chart Type and send it to updateChart Function
+        chartType.addEventListener('change', function () {
+            updateChart(this.value);
+        });
+        // create variable to hold chart
+        let myChart;
+
+        const updateChart = function (chartType) {
+            // Fist Remove previous Graph and refresh content
+            if (myChart) myChart.destroy()
+
+            const chartTypies = ['bar', 'line', 'pie', 'doughnut', 'radar', 'polarArea']
+            if (chartTypies.includes(chartType)) {
+                fetch('/get_chart_data/' + chartType + '/')
+                    .then(res => res.json())
+                    .then(data => {
+                        myChart = new Chart(chartContext, {
+                            type: chartType,
+                            data: {
+                                labels: data.labels,
+                                datasets: [{
+                                    label: 'Sales Data',
+                                    data: data.data,
+                                    backgroundColor: 'rgba(75,192,192,0.2)',
+                                    borderColor: 'rgba(75,192,192,1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: false,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    });
+            } else if (chartType === 'area') {
+                fetch('/get_chart_data/' + chartType + '/').then(res => res.json()).then(data => {
+                    myChart = new Chart(chartContext, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Sales Data',
+                                data: data.datasets[0].data,
+                                backgroundColor: data.datasets[0].backgroundColor,
+                                borderColor: data.datasets[0].borderColor,
+                                borderWidth: data.datasets[0].borderWidth,
+                                fill:true // indicate area graph this properity
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            maintainAspectRatio: false
+                        }
+                    });
+                });
+
+            }
+        }
+
+        // Send Value when page reloaded first time as bar chart 
+        updateChart(chartType.value)
+
+    </script>
+</body>
+
+</html>

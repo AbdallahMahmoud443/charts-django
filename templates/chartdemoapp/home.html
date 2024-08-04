@@ -1,0 +1,26 @@
+{% extends "./layout.html" %}
+
+
+
+{% block content_page %}
+  <h2 class="text-success">Charts Demo Project</h2>
+   <div class="row w-25 my-5">
+    <form>
+        <label for="chartType">Select Chart Type</label>
+        <select class="form-select" aria-label="Select Chart Type" id="chartType">
+            <option value="bar" selected>Bar Chart</option>
+            <option value="line">Line Chart</option>
+            <option value="pie">Pie Chart</option>
+            <option value="doughnut">Doughnut Chart</option>        
+            <option value="area">Area Chart</option>
+            <option value="radar">Radar Chart</option>
+            <option value="polarArea">Polar Area Chart</option>
+        </select>
+    </form>
+   </div>
+   <div class="row">
+    <canvas id="mychart" width="600" height="600"></canvas>
+   </div>
+
+
+{% endblock content_page %}
